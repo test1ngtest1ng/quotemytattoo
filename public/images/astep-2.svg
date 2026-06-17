@@ -1,0 +1,27 @@
+<svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+<defs><clipPath id="ar2"><circle cx="130" cy="130" r="128"/></clipPath></defs>
+<g clip-path="url(#ar2)">
+<rect width="260" height="260" fill="#CDB9E0"/>
+<rect y="162" width="260" height="98" fill="#5C3F80"/>
+<g transform="rotate(-6 124 120)">
+  <rect x="66" y="34" width="108" height="172" rx="18" fill="#311A41"/>
+  <rect x="73" y="42" width="94" height="156" rx="10" fill="#F6F3FA"/>
+  <!-- enquiry card -->
+  <rect x="84" y="54" width="72" height="56" rx="8" fill="#E6DAF2"/>
+  <circle cx="102" cy="74" r="10" fill="#F3C9A8"/><path d="M92 73.5 A 10 10 0 0 1 112 73.5 Z" fill="#4A2E1E"/><circle cx="98.8" cy="75.2" r="1.5" fill="#2A1438"/><circle cx="105.2" cy="75.2" r="1.5" fill="#2A1438"/>
+  <rect x="118" y="66" width="32" height="5" rx="2.5" fill="#C9BBD9"/><rect x="118" y="76" width="22" height="5" rx="2.5" fill="#D7CCE3"/>
+  <path d="M120 96 C120 96 128 106 128 110 A8 8 0 1 1 112 110 C112 106 120 96 120 96 Z" fill="#6A2E96"/>
+  <!-- interested button -->
+  <rect x="84" y="124" width="72" height="28" rx="14" fill="#6A2E96"/>
+  <path d="M104 138 l4 5 9 -11" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="120" y="135" width="22" height="6" rx="3" fill="#D9C7EC"/>
+</g>
+<!-- tap ripple -->
+<g stroke="#FFB400" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.9">
+  <path d="M150 150 q9 2 12 11"/><path d="M156 142 q12 2 16 14"/>
+</g>
+<!-- hand / thumb tapping -->
+<rect x="150" y="170" width="46" height="80" rx="18" fill="#E7B58E" transform="rotate(-20 173 210)"/>
+<ellipse cx="146" cy="166" rx="20" ry="15" fill="#F3C9A8"/>
+<rect x="130" y="140" width="14" height="30" rx="7" fill="#F3C9A8"/>
+</g></svg>

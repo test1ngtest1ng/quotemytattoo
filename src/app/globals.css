@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/* Quote My Tattoo brand tokens (from design-reference mockups) */
+@theme {
+  --color-plum: #311a41;
+  --color-plum-deep: #22112e;
+  --color-violet: #6a2e96;
+  --color-violet-dark: #57247b;
+  --color-trust: #00b67a;
+  --color-star: #ffb400;
+  --color-line: #e7e1ee;
+  --color-ink: #2a2233;
+  --color-muted: #736b7e;
+
+  --font-sans: var(--font-figtree), system-ui, -apple-system, sans-serif;
+
+  --radius-btn: 10px;
+  --radius-card: 14px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* Save / favourite (heart) button - used on directory cards, the artist profile,
+   and the saved-artists page; defined once here so it's consistent everywhere. */
+.save-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border: 1px solid var(--color-line);
+  background: #fff;
+  color: var(--color-muted);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.save-btn:hover {
+  border-color: var(--color-violet);
+  color: var(--color-violet);
+}
+.save-btn.on {
+  color: var(--color-violet);
+  border-color: var(--color-violet);
+  background: #f2eaf8;
+}
+.save-btn.labelled {
+  width: auto;
+  padding: 0 18px;
+  font-weight: 600;
+  font-size: 15px;
+}
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Report / flag affordance + popover - used on profiles, reviews and chat. */
+.report-wrap { position: relative; display: inline-flex; }
+.report-link { background: none; border: none; color: var(--color-muted); font-size: 13px; font-weight: 600; cursor: pointer; padding: 2px 4px; text-decoration: underline; text-underline-offset: 2px; }
+.report-link:hover { color: #b91c1c; }
+.report-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(34, 17, 46, 0.45); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.report-modal { width: min(92vw, 360px); background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); padding: 20px; text-align: left; }
+.report-title { font-size: 14px; font-weight: 800; color: var(--color-plum); margin: 0 0 8px; }
+.report-select, .report-text { width: 100%; border: 1px solid var(--color-line); border-radius: 8px; padding: 8px 10px; font-size: 14px; font-family: inherit; color: var(--color-ink); outline: none; margin-bottom: 8px; background: #fff; }
+.report-text { resize: vertical; }
+.report-err { color: #b91c1c; font-size: 12.5px; margin: 0 0 8px; }
+.report-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.report-cancel { background: none; border: none; color: var(--color-muted); font-weight: 600; font-size: 13px; cursor: pointer; }
+.report-send { background: var(--color-violet); color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-weight: 700; font-size: 13px; cursor: pointer; }
+.report-send:disabled { opacity: 0.6; }
+.report-done { font-size: 13.5px; color: var(--color-trust); font-weight: 700; margin: 0; }

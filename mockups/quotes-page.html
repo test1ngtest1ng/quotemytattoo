@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QMT - Quotes page mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum:#311A41; --violet:#6A2E96; --violet-d:#57247B;
+    --trust:#00B67A; --star:#FFB400;
+    --line:#D8CFE4; --line2:#E4DCEE; --text:#2A2233; --muted:#736B7E; --ink:#1d1726;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Figtree,system-ui,sans-serif;color:var(--text);background:#F7F4FA;-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit}
+  h1,h2,h3,h4{margin:0}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* fake app header */
+  header.app{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  header.app .inner{max-width:1080px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:28px}
+  .logo{font-weight:800;color:var(--plum);font-size:18px}
+  .logo span{color:var(--violet)}
+  nav.top{display:flex;gap:24px;font-weight:600;color:var(--muted);font-size:15px}
+  nav.top a.active{color:var(--ink)}
+  .acct{margin-left:auto;display:flex;align-items:center;gap:14px;color:var(--muted)}
+  .av-sm{width:30px;height:30px;border-radius:50%;background:var(--line2);display:inline-block}
+
+  /* state switcher */
+  .switch{position:sticky;top:57px;z-index:15;background:#F7F4FA;border-bottom:1px solid var(--line);padding:12px 0}
+  .switch .inner{max-width:1080px;margin:0 auto;padding:0 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .switch b{font-size:13px;color:var(--muted);font-weight:600;margin-right:6px}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 16px;font:inherit;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
+  .pill.on{background:var(--violet);border-color:var(--violet);color:#fff}
+  .hint{margin-left:auto;font-size:12px;color:var(--muted)}
+
+  main{padding:26px 0 80px}
+  .crumb{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  h1.title{font-size:30px;font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-bottom:22px}
+
+  .card{border:2px solid var(--line);border-radius:10px;background:#fff}
+  .pad{padding:20px 22px}
+  .card h2{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.01em;margin:0 0 16px;padding-bottom:14px;border-bottom:1px solid var(--line2)}
+  .card h3{font-size:18px;font-weight:700;color:var(--ink);margin:0 0 6px}
+  .muted-block{font-size:15px;color:var(--muted);line-height:1.6;margin:0}
+
+  .meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:4px 0 0;font-size:14px;color:var(--muted);font-weight:600}
+  .meta-row .mi:not(:first-child){border-left:1px solid var(--line2);padding-left:12px}
+  .refs{display:grid;grid-template-columns:repeat(auto-fill,88px);gap:8px;margin-top:14px}
+  .refs.big{grid-template-columns:repeat(5,1fr);gap:10px}
+  .thumb{aspect-ratio:1;border-radius:8px;background:#E7DEF0;display:flex;align-items:center;justify-content:center;color:#9784ad;font-size:11px}
+
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start}
+  .stack{display:flex;flex-direction:column;gap:22px}
+
+  /* artist rows */
+  .arow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px 14px;cursor:pointer;font:inherit;margin-bottom:10px}
+  .arow:last-child{margin-bottom:0}
+  .arow.sel{background:#F2EAF8;border-color:#d9c6ec}
+  .av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+  .arow .nm{font-weight:700;color:var(--ink);font-size:15px;display:block}
+  .arow .rt{font-size:13px;color:var(--muted);font-weight:600}
+  .arow .pr{margin-left:auto;text-align:right;font-size:13px;color:var(--muted);font-weight:600}
+  .btn{background:var(--violet);color:#fff;border:none;border-radius:8px;padding:8px 16px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+  .btn.sm{padding:6px 14px;font-size:13px}
+  .btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);border-radius:8px;padding:8px 16px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+  .btn-row{margin-left:auto}
+
+  .resp-head{display:flex;align-items:center;gap:14px;padding:18px 22px}
+  .resp-head .nm{font-size:20px;font-weight:800;color:var(--ink)}
+  .resp-head .rt{font-size:14px;color:var(--muted);font-weight:600;display:flex;gap:6px;align-items:center}
+  .resp-head .recv{font-size:14px;color:var(--muted);margin-top:2px}
+  .star{color:var(--star)}
+
+  .est-note{font-size:13px;color:var(--muted);font-style:italic;margin:0 0 14px}
+  .est{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+  .price{font-size:22px;font-weight:800;color:var(--ink)}
+  .price-note{font-size:13px;color:var(--muted);margin-top:4px}
+  .est-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+  .accepted{color:var(--trust);font-weight:800;font-size:14px}
+  .est-contact{list-style:none;margin:14px 0 0;padding:14px 0 0;border-top:1px solid var(--line2)}
+  .est-contact li{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:3px 0}
+  .est-contact .k{color:var(--muted)}
+  .est-contact a{color:var(--violet);font-weight:600;text-decoration:none}
+
+  .ptabs{display:flex;gap:22px;border-bottom:1px solid var(--line2);padding:0 22px}
+  .ptabs button{background:none;border:none;font:inherit;font-weight:700;font-size:15px;color:var(--muted);padding:14px 0;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .ptabs button.on{color:var(--ink);border-bottom-color:var(--violet)}
+  .pbody{padding:18px 22px}
+  .gk{font-size:13px;color:var(--muted);margin-bottom:10px}
+  .gk-list{margin:0 0 12px;padding-left:18px;color:var(--muted);font-size:14px;line-height:1.7}
+  .tag{display:inline-block;background:#F2EAF8;color:var(--violet-d);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;margin:0 6px 6px 0}
+
+  .rev-input{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:inherit;font-size:14px;margin-bottom:8px;background:#fff}
+  .rev-select{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:inherit;font-size:14px;margin-bottom:8px;background:#fff}
+  .stars-in{color:var(--star);font-size:22px;letter-spacing:3px;margin-bottom:8px}
+  .vbadge{display:inline-block;color:var(--trust);font-weight:700;font-size:12px;margin-left:6px}
+
+  .statusbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .statusbar .ok{font-weight:700;color:var(--trust)}
+
+  .brief-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted);font-weight:600}
+  .brief-line .t{color:var(--ink);font-size:15px;font-weight:700}
+  .brief-line a{margin-left:auto;color:var(--violet);font-weight:700;text-decoration:none}
+
+  details.close-box{margin-top:22px;border:1px dashed var(--line);border-radius:10px;background:#fff}
+  details.close-box summary{cursor:pointer;padding:14px 18px;font-weight:700;color:var(--ink);font-size:15px}
+  details.close-box .cb{padding:0 18px 18px}
+  .close-note{font-size:13px;color:var(--muted);margin:0 0 10px}
+  .footer-close{margin-top:22px;display:flex;align-items:center;gap:12px}
+  .footer-link{color:var(--muted);font-size:14px;font-weight:600;text-decoration:underline}
+
+  .note-cap{font-size:11px;color:#a99bbb;font-weight:600;text-align:right;margin:-4px 0 0}
+  .view{display:none}
+  .view.show{display:block}
+  .selhint{background:#FBF7E8;border:1px solid #ECE0B8;color:#7a6a2e;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:18px}
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="inner">
+    <div class="logo">quotemytattoo<span>.co.uk</span></div>
+    <nav class="top">
+      <a class="active">Dashboard</a>
+      <a>New request</a>
+      <a>My requests</a>
+    </nav>
+    <div class="acct"><span>&#9737;</span><span class="av-sm"></span></div>
+  </div>
+</header>
+
+<div class="switch">
+  <div class="inner">
+    <b>View</b>
+    <button class="pill" data-v="current">Current (today)</button>
+    <button class="pill on" data-v="s2">Leaner: quotes in</button>
+    <button class="pill" data-v="s1">Leaner: waiting</button>
+    <button class="pill" data-v="s3">Leaner: accepted</button>
+    <span class="hint">Mockup only - not wired into the app</span>
+  </div>
+</div>
+
+<main>
+<div class="wrap">
+
+  <!-- ===================== CURRENT (DENSE) ===================== -->
+  <section class="view" id="current">
+    <div class="crumb">&#8592; My requests</div>
+    <h1 class="title">Quotes for your request: Medium Piece, Chest</h1>
+    <div class="selhint">This replicates roughly what the page looks like today: every block stacked at full weight.</div>
+
+    <div class="card" style="margin-bottom:22px"><div class="pad">
+      <h2>Your request</h2>
+      <div class="meta-row"><span class="mi">Posted 15 Jun 2026</span><span class="mi">Black &amp; grey</span><span class="mi">Medium</span><span class="mi">Chest</span><span class="mi">E1 8NT</span></div>
+      <p class="muted-block" style="margin-top:12px;color:var(--text)">Geometric chest piece, want to talk through placement and a few reference ideas.</p>
+      <h4 style="margin:16px 0 0;font-size:14px">Reference images</h4>
+      <div class="refs big"><span class="thumb">ref</span><span class="thumb">ref</span><span class="thumb">ref</span></div>
+    </div></div>
+
+    <div class="grid">
+      <div class="stack">
+        <div class="card"><div class="pad">
+          <h2>My chats</h2>
+          <p class="muted-block" style="margin-bottom:14px">Message the artists you like - swap contact when ready.</p>
+          <button class="arow sel"><span class="av" style="background:#6A2E96">AR</span><span><span class="nm">Autographed by A</span><span class="rt">&#9733; New (0 reviews)</span></span></button>
+          <button class="arow"><span class="av" style="background:#00855A">MW</span><span><span class="nm">Tattoos by Mara</span><span class="rt">&#9733; 5.0 (1 review)</span></span></button>
+        </div></div>
+        <div class="card"><div class="pad">
+          <h2>Interested artists</h2>
+          <p class="muted-block" style="margin-bottom:14px">These artists responded to your request.</p>
+          <button class="arow sel"><span class="av" style="background:#6A2E96">AR</span><span><span class="nm">Autographed by A</span><span class="rt">&#9733; New (0 reviews)</span></span></button>
+          <button class="arow"><span class="av" style="background:#00855A">MW</span><span><span class="nm">Tattoos by Mara</span><span class="rt">&#9733; 5.0 (1 review)</span></span></button>
+        </div></div>
+      </div>
+
+      <div class="stack">
+        <div class="card"><div class="resp-head">
+          <span class="av" style="background:#6A2E96">AR</span>
+          <div><div class="nm">Autographed by A</div><div class="rt"><span class="star">&#9733;</span> New (0 reviews)</div><div class="recv">Artist: Aziz Rahh &middot; Liverpool, L8</div></div>
+        </div></div>
+
+        <div class="card"><div class="pad">
+          <h2>Artist's quote</h2>
+          <p class="est-note">Accepting the quote reveals the artist's full contact details and location - it's not a contract.</p>
+          <div class="est">
+            <div><div class="price">From &pound;250</div><div class="price-note">one session</div></div>
+            <div class="est-actions"><button class="btn-ghost">Message</button><button class="btn">Accept quote</button></div>
+          </div>
+        </div></div>
+
+        <div class="card">
+          <div class="ptabs"><button class="on">Profile</button><button>Reviews</button><button>Messages</button></div>
+          <div class="pbody">
+            <div class="gk">Member since 2024</div>
+            <h4 style="font-size:15px;margin-bottom:8px">Good to know</h4>
+            <ul class="gk-list"><li>Licensed / council-registered</li><li>Public liability insurance</li><li>Hygiene certified</li></ul>
+            <p class="muted-block" style="margin-bottom:12px">Black &amp; grey and Japanese specialist working from a private studio.</p>
+            <span class="tag">Black &amp; grey</span><span class="tag">Japanese</span><span class="tag">Micro / minimal</span>
+            <h4 style="font-size:15px;margin:16px 0 8px">Portfolio</h4>
+            <div class="refs big"><span class="thumb">art</span><span class="thumb">art</span><span class="thumb">art</span><span class="thumb">art</span><span class="thumb">art</span></div>
+          </div>
+        </div>
+
+        <div class="card"><div class="pad">
+          <h3>Leave a review</h3>
+          <div class="gk" style="margin:10px 0">Review Aziz Rahh</div>
+          <div class="stars-in">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <input class="rev-input" placeholder="Title (optional)">
+          <textarea class="rev-input" rows="3" placeholder="How was your experience?"></textarea>
+          <button class="btn">Submit review</button>
+        </div></div>
+      </div>
+    </div>
+
+    <details class="close-box"><summary>Done with this request?</summary><div class="cb">
+      <p class="close-note">Let us know how it went so we can close this request.</p>
+      <select class="rev-select"><option>I booked someone elsewhere</option><option>No - I changed my mind</option></select>
+      <input class="rev-input" placeholder="Anything else? (optional)">
+      <button class="btn-ghost">Close request</button>
+    </div></details>
+  </section>
+
+  <!-- ===================== STATE 1: WAITING ===================== -->
+  <section class="view" id="s1">
+    <div class="crumb">&#8592; My requests</div>
+    <h1 class="title">Your request: Medium Piece, Chest</h1>
+    <div class="selhint">No quotes yet. The page stays calm - just your brief and a status line. Nothing else competes for attention.</div>
+
+    <div class="card" style="margin-bottom:22px"><div class="pad">
+      <h2>Your request</h2>
+      <div class="meta-row"><span class="mi">Posted 15 Jun 2026</span><span class="mi">Black &amp; grey</span><span class="mi">Medium</span><span class="mi">Chest</span><span class="mi">E1 8NT</span></div>
+      <p class="muted-block" style="margin-top:12px;color:var(--text)">Geometric chest piece, want to talk through placement and a few reference ideas.</p>
+      <h4 style="margin:16px 0 0;font-size:14px">Reference images</h4>
+      <div class="refs"><span class="thumb">ref</span><span class="thumb">ref</span><span class="thumb">ref</span></div>
+    </div></div>
+
+    <div class="card"><div class="pad" style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:26px">&#9203;</span>
+      <div><h3>Waiting for quotes</h3><p class="muted-block">We've notified matching artists. Their quotes and chats appear here as they respond, and we'll email you.</p></div>
+    </div></div>
+  </section>
+
+  <!-- ===================== STATE 2: QUOTES IN, NONE ACCEPTED ===================== -->
+  <section class="view show" id="s2">
+    <div class="crumb">&#8592; My requests</div>
+    <h1 class="title">Quotes for your request: Medium Piece, Chest</h1>
+    <div class="selhint">Quotes are in. The brief shrinks to one line; the job now is "talk to an artist", so Message is the loud action and the artist list leads.</div>
+
+    <div class="card" style="margin-bottom:22px"><div class="pad">
+      <div class="brief-line"><span class="t">Medium piece, chest</span><span>Black &amp; grey &middot; Medium &middot; Chest &middot; E1 8NT</span><a>View details</a></div>
+    </div></div>
+
+    <div class="grid">
+      <div class="card"><div class="pad">
+        <h2>Artists (2)</h2>
+        <p class="muted-block" style="margin-bottom:14px">Message anyone to discuss before you accept a quote.</p>
+        <div class="arow sel"><span class="av" style="background:#00855A">MW</span><span><span class="nm">Tattoos by Mara</span><span class="rt">&#9733; 5.0 &middot; From &pound;250</span></span><button class="btn sm btn-row">Message</button></div>
+        <div class="arow"><span class="av" style="background:#6A2E96">AR</span><span><span class="nm">Autographed by A</span><span class="rt">New &middot; From &pound;250</span></span><button class="btn sm btn-row">Message</button></div>
+      </div></div>
+
+      <div class="stack">
+        <div class="card"><div class="resp-head">
+          <span class="av" style="background:#00855A">MW</span>
+          <div><div class="nm">Tattoos by Mara</div><div class="rt"><span class="star">&#9733;</span> 5.0 (1 review)</div><div class="recv">Artist: Mara Whitlock &middot; Manchester, M1</div></div>
+          <button class="btn btn-row">Message</button>
+        </div></div>
+
+        <div class="card"><div class="pad">
+          <h2>Mara's quote</h2>
+          <p class="est-note">Accepting reveals Mara's full contact details and location - it's not a contract.</p>
+          <div class="est">
+            <div><div class="price">From &pound;250</div><div class="price-note">one session, includes design time</div></div>
+            <div class="est-actions"><button class="btn-ghost">Accept quote</button></div>
+          </div>
+        </div></div>
+
+        <div class="card">
+          <div class="ptabs"><button class="on">Profile</button><button>Reviews</button><button>Messages</button></div>
+          <div class="pbody">
+            <div class="gk">Member since 2024</div>
+            <h4 style="font-size:15px;margin-bottom:8px">Good to know</h4>
+            <ul class="gk-list"><li>Licensed / council-registered</li><li>Public liability insurance</li><li>Hygiene certified</li></ul>
+            <p class="muted-block" style="margin-bottom:12px">Black &amp; grey and Japanese specialist working from a private studio in Manchester.</p>
+            <span class="tag">Black &amp; grey</span><span class="tag">Japanese</span><span class="tag">Botanical</span>
+            <h4 style="font-size:15px;margin:16px 0 8px">Portfolio</h4>
+            <div class="refs big"><span class="thumb">art</span><span class="thumb">art</span><span class="thumb">art</span><span class="thumb">art</span><span class="thumb">art</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-close"><a class="footer-link">Done with this request?</a></div>
+  </section>
+
+  <!-- ===================== STATE 3: ACCEPTED ===================== -->
+  <section class="view" id="s3">
+    <div class="crumb">&#8592; My requests</div>
+    <h1 class="title">Quotes for your request: Medium Piece, Chest</h1>
+    <div class="selhint">You accepted Mara's quote. Her contact + "Done with this request" get promoted - but the quote, profile, portfolio and reviews are all still here, below, exactly as before.</div>
+
+    <div class="card" style="margin-bottom:22px"><div class="pad">
+      <div class="brief-line"><span class="t">Medium piece, chest</span><span>Black &amp; grey &middot; Medium &middot; Chest &middot; E1 8NT</span><a>View details</a></div>
+    </div></div>
+
+    <div class="grid">
+      <div class="card"><div class="pad">
+        <h2>Artists (2)</h2>
+        <div class="arow sel"><span class="av" style="background:#00855A">MW</span><span><span class="nm">Tattoos by Mara</span><span class="rt" style="color:var(--trust)">&#10003; Accepted</span></span></div>
+        <div class="arow"><span class="av" style="background:#6A2E96">AR</span><span><span class="nm">Autographed by A</span><span class="rt">New &middot; From &pound;250</span></span></div>
+      </div></div>
+
+      <div class="stack">
+        <div class="card"><div class="resp-head">
+          <span class="av" style="background:#00855A">MW</span>
+          <div><div class="nm">Tattoos by Mara</div><div class="rt"><span class="star">&#9733;</span> 5.0 (1 review)</div><div class="recv">Artist: Mara Whitlock &middot; Manchester, M1</div></div>
+          <button class="btn btn-row">Message</button>
+        </div></div>
+
+        <div class="card"><div class="pad">
+          <h2>Mara's quote</h2>
+          <div class="est">
+            <div><div class="price">From &pound;250</div><div class="price-note">one session, includes design time</div></div>
+            <div class="est-actions"><span class="accepted">&#10003; Quote accepted</span></div>
+          </div>
+          <ul class="est-contact">
+            <li><span class="k">Studio address</span><span>12 Ardwick Rd, Manchester, M1 2AB</span></li>
+            <li><span class="k">Phone</span><a>07700 900123</a></li>
+            <li><span class="k">Email</span><a>mara@tattoosbymara.co.uk</a></li>
+          </ul>
+        </div></div>
+
+        <div class="card">
+          <div class="ptabs"><button class="on">Profile</button><button>Reviews</button><button>Messages</button></div>
+          <div class="pbody">
+            <div class="gk">Member since 2024</div>
+            <h4 style="font-size:15px;margin-bottom:8px">Good to know</h4>
+            <ul class="gk-list"><li>Licensed / council-registered</li><li>Public liability insurance</li><li>Hygiene certified</li></ul>
+            <p class="muted-block" style="margin-bottom:12px">Black &amp; grey and Japanese specialist working from a private studio in Manchester.</p>
+            <span class="tag">Black &amp; grey</span><span class="tag">Japanese</span><span class="tag">Botanical</span>
+            <h4 style="font-size:15px;margin:16px 0 8px">Portfolio</h4>
+            <div class="refs big"><span class="thumb">art</span><span class="thumb">art</span><span class="thumb">art</span><span class="thumb">art</span><span class="thumb">art</span></div>
+          </div>
+        </div>
+
+        <div class="card"><div class="pad">
+          <h3>Leave a review <span class="vbadge">&#10003; Verified booking</span></h3>
+          <div class="gk" style="margin:10px 0">Review Mara Whitlock</div>
+          <div class="stars-in">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <input class="rev-input" placeholder="Title (optional)">
+          <textarea class="rev-input" rows="3" placeholder="How was your experience?"></textarea>
+          <button class="btn">Submit review</button>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="footer-close">
+      <button class="btn">Done with this request?</button>
+      <span style="font-size:13px;color:var(--muted)">closing lets you leave a review and confirms your booking</span>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<script>
+  const views = document.querySelectorAll('.view');
+  const pills = document.querySelectorAll('.pill');
+  pills.forEach(p => p.addEventListener('click', () => {
+    pills.forEach(x => x.classList.remove('on'));
+    p.classList.add('on');
+    views.forEach(v => v.classList.remove('show'));
+    document.getElementById(p.dataset.v).classList.add('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }));
+</script>
+</body>
+</html>

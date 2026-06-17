@@ -1,0 +1,26 @@
+<svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+<defs><clipPath id="ar1"><circle cx="130" cy="130" r="128"/></clipPath></defs>
+<g clip-path="url(#ar1)">
+<rect width="260" height="260" fill="#CDB9E0"/>
+<rect y="162" width="260" height="98" fill="#5C3F80"/>
+<rect x="74" y="40" width="112" height="184" rx="18" fill="#311A41"/>
+<rect x="81" y="48" width="98" height="168" rx="10" fill="#F6F3FA"/>
+<!-- header -->
+<rect x="81" y="48" width="98" height="28" rx="10" fill="#E6DAF2"/>
+<rect x="92" y="59" width="48" height="6" rx="3" fill="#B9A6D0"/>
+<!-- enquiry rows -->
+<rect x="89" y="86" width="82" height="34" rx="7" fill="#FFFFFF"/>
+<circle cx="105" cy="103" r="11" fill="#F3C9A8"/><path d="M94 102.5 A 11 11 0 0 1 116 102.5 Z" fill="#4A2E1E"/><circle cx="101.5" cy="104.3" r="1.5" fill="#2A1438"/><circle cx="108.5" cy="104.3" r="1.5" fill="#2A1438"/>
+<rect x="122" y="95" width="40" height="6" rx="3" fill="#D7CCE3"/><rect x="122" y="106" width="28" height="5" rx="2.5" fill="#EAE3F0"/>
+<circle cx="166" cy="92" r="3.5" fill="#5FC93C"/>
+<rect x="89" y="126" width="82" height="34" rx="7" fill="#FFFFFF"/>
+<circle cx="105" cy="143" r="11" fill="#C68A5B"/><path d="M94 142.4 A 11 11 0 0 1 116 142.4 Z" fill="#1C1022"/><circle cx="101.5" cy="144.3" r="1.5" fill="#2A1438"/><circle cx="108.5" cy="144.3" r="1.5" fill="#2A1438"/>
+<rect x="122" y="135" width="40" height="6" rx="3" fill="#D7CCE3"/><rect x="122" y="146" width="24" height="5" rx="2.5" fill="#EAE3F0"/>
+<circle cx="166" cy="132" r="3.5" fill="#5FC93C"/>
+<rect x="89" y="166" width="82" height="34" rx="7" fill="#FFFFFF"/>
+<circle cx="105" cy="183" r="11" fill="#E7B58E"/><path d="M94 182.4 A 11 11 0 0 1 116 182.4 Z" fill="#2E2118"/><circle cx="101.5" cy="184.3" r="1.5" fill="#2A1438"/><circle cx="108.5" cy="184.3" r="1.5" fill="#2A1438"/>
+<rect x="122" y="175" width="40" height="6" rx="3" fill="#D7CCE3"/><rect x="122" y="186" width="30" height="5" rx="2.5" fill="#EAE3F0"/>
+<!-- notification badge -->
+<circle cx="180" cy="54" r="20" fill="#5FC93C" stroke="#FFFFFF" stroke-width="4"/>
+<text x="180" y="61" font-family="Arial, sans-serif" font-size="20" font-weight="800" fill="#fff" text-anchor="middle">3</text>
+</g></svg>

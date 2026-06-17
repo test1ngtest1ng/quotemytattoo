@@ -1,0 +1,49 @@
+@layer base {
+  .legal-main{background:#fff}
+  .legal{max-width:760px;margin:0 auto;padding:40px 28px 64px}
+  .legal .crumb{font-size:13.5px;color:var(--muted);margin:0 0 18px}
+  .legal .crumb a{color:var(--muted);text-decoration:none}
+  .legal .crumb a:hover{color:var(--violet)}
+  .legal h1{font-size:clamp(30px,4vw,42px);font-weight:800;letter-spacing:-.02em;color:var(--plum);margin:0 0 8px;line-height:1.1}
+  .legal .updated{color:var(--muted);font-size:14px;margin:0 0 26px}
+  .legal h2{font-size:22px;font-weight:800;color:var(--ink);margin:34px 0 10px;letter-spacing:-.01em}
+  .legal h3{font-size:17px;font-weight:800;color:var(--ink);margin:22px 0 8px}
+  .legal p,.legal li{font-size:16px;line-height:1.7;color:var(--text)}
+  .legal p{margin:0 0 14px}
+  .legal ul{margin:0 0 16px;padding-left:22px;display:grid;gap:7px}
+  .legal a{color:var(--violet);text-decoration:underline;text-underline-offset:2px}
+  .legal .note{background:#FFF8E6;border:1px solid #F2E3B3;border-radius:10px;padding:14px 16px;font-size:14px;line-height:1.6;color:#7a5c00;margin:0 0 26px}
+  .legal table{width:100%;border-collapse:collapse;margin:0 0 18px;font-size:15px}
+  .legal th,.legal td{text-align:left;padding:10px 12px;border:1px solid var(--line);vertical-align:top}
+  .legal th{background:#F7F3FB;font-weight:800;color:var(--ink)}
+
+  /* Guides hub + articles */
+  .ghub{max-width:1000px;margin:0 auto;padding:40px 28px 64px}
+  .ghub h1{font-size:clamp(30px,4vw,42px);font-weight:800;letter-spacing:-.02em;color:var(--plum);margin:0 0 8px;line-height:1.1}
+  .ghub .lead{color:var(--muted);font-size:18px;max-width:60ch;margin:0 0 36px;line-height:1.6}
+  .gcat{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin:34px 0 16px}
+  .ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+  .gcard{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;text-decoration:none;transition:box-shadow .18s,transform .18s}
+  .gcard:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+  .gcard .ph{aspect-ratio:16/9;background:linear-gradient(135deg,#F2EAF8,#E4F5EE);display:grid;place-items:center;color:var(--muted);font-size:12.5px;font-weight:600;text-align:center;padding:12px}
+  .gcard .gc-body{padding:18px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .gcard .gc-cat{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--violet)}
+  .gcard h3{font-size:18px;font-weight:800;color:var(--ink);margin:0;line-height:1.25}
+  .gcard p{font-size:14.5px;color:var(--muted);margin:0;line-height:1.5}
+  .gcard .gc-read{margin-top:auto;font-size:13px;color:var(--muted);font-weight:600;padding-top:6px}
+
+  /* Guide article */
+  .gart{max-width:760px;margin:0 auto;padding:36px 28px 64px}
+  .gart .gc-cat{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin:0 0 8px}
+  .gart h1{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.02em;color:var(--plum);margin:0 0 10px;line-height:1.12}
+  .gart .meta{color:var(--muted);font-size:14px;margin:0 0 22px}
+  .gart .hero-ph{aspect-ratio:16/9;border-radius:14px;background:linear-gradient(135deg,#F2EAF8,#E4F5EE);display:grid;place-items:center;color:#6b6475;font-size:13px;font-weight:600;text-align:center;padding:16px;margin:0 0 26px}
+  .gart .intro{font-size:18px;line-height:1.7;color:var(--text);margin:0 0 8px}
+  .gart h2{font-size:22px;font-weight:800;color:var(--ink);margin:30px 0 10px;letter-spacing:-.01em}
+  .gart p{font-size:16.5px;line-height:1.7;color:var(--text);margin:0 0 14px}
+  .gart ul{margin:0 0 16px;padding-left:22px;display:grid;gap:7px}
+  .gart li{font-size:16px;line-height:1.55;color:var(--text)}
+  .gart .faq h3{font-size:17px;font-weight:800;color:var(--ink);margin:18px 0 6px}
+  .gart .cta{margin:36px 0 0;background:#F3EDF9;border-radius:14px;padding:24px;text-align:center}
+  .gart .cta h3{font-size:20px;font-weight:800;color:var(--plum);margin:0 0 12px}
+}

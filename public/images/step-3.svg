@@ -1,0 +1,27 @@
+<svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+<defs><clipPath id="c3"><circle cx="130" cy="130" r="128"/></clipPath></defs>
+<g clip-path="url(#c3)">
+<rect width="260" height="260" fill="#CDB9E0"/>
+<rect y="162" width="260" height="98" fill="#5C3F80"/>
+
+<rect x="62" y="40" width="136" height="182" rx="16" fill="#FFFFFF"/>
+<path d="M62 56 a16 16 0 0 1 16 -16 h104 a16 16 0 0 1 16 16 v52 h-136 z" fill="#E6DAF2"/>
+<!-- bust -->
+<path d="M96 108 C96 86 110 76 130 76 C150 76 164 86 164 108 Z" fill="#311A41"/>
+<circle cx="130" cy="74" r="20" fill="#C68A5B"/>
+<path d="M110 70 C108 50 152 48 150 70 C152 56 142 50 130 50 C118 50 108 56 110 70 Z" fill="#1C1022"/>
+<!-- name + lines -->
+<rect x="80" y="124" width="76" height="9" rx="4.5" fill="#D7CCE3"/>
+<rect x="80" y="140" width="48" height="6" rx="3" fill="#EAE3F0"/>
+<!-- stars -->
+<polygon points="86.0,161.0 87.9,165.5 92.7,165.8 89.0,169.0 90.1,173.7 86.0,171.2 81.9,173.7 83.0,169.0 79.3,165.8 84.1,165.5" fill="#FFB400"/><polygon points="105.0,161.0 106.9,165.5 111.7,165.8 108.0,169.0 109.1,173.7 105.0,171.2 100.9,173.7 102.0,169.0 98.3,165.8 103.1,165.5" fill="#FFB400"/><polygon points="124.0,161.0 125.9,165.5 130.7,165.8 127.0,169.0 128.1,173.7 124.0,171.2 119.9,173.7 121.0,169.0 117.3,165.8 122.1,165.5" fill="#FFB400"/><polygon points="143.0,161.0 144.9,165.5 149.7,165.8 146.0,169.0 147.1,173.7 143.0,171.2 138.9,173.7 140.0,169.0 136.3,165.8 141.1,165.5" fill="#FFB400"/><polygon points="162.0,161.0 163.9,165.5 168.7,165.8 165.0,169.0 166.1,173.7 162.0,171.2 157.9,173.7 159.0,169.0 155.3,165.8 160.1,165.5" fill="#E7DBC2"/>
+<!-- portfolio thumbs -->
+<rect x="80" y="182" width="30" height="30" rx="6" fill="#E6DAF2"/><path d="M95 188 C95 188 102.2 197.0 102.2 200.6 A7.2 7.2 0 1 1 87.8 200.6 C87.8 197.0 95 188 95 188 Z" fill="#311A41"/>
+<rect x="116" y="182" width="30" height="30" rx="6" fill="#E6DAF2"/>
+<g stroke="#311A41" stroke-width="2" fill="none"><path d="M124 200 q7 -10 14 0"/></g>
+<rect x="152" y="182" width="30" height="30" rx="6" fill="#E6DAF2"/><path d="M167 188 C167 188 174.2 197.0 174.2 200.6 A7.2 7.2 0 1 1 159.8 200.6 C159.8 197.0 167 188 167 188 Z" fill="#5FC93C"/>
+<!-- check badge -->
+<circle cx="188" cy="62" r="22" fill="#5FC93C" stroke="#FFFFFF" stroke-width="4"/>
+<path d="M179 62 l6 7 12 -14" stroke="#FFFFFF" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+</g></svg>

@@ -1,0 +1,399 @@
+"use client";
+
+/* eslint-disable @next/next/no-img-element */
+import { useState, useRef } from "react";
+import Link from "next/link";
+import { Chat } from "@/components/chat/Chat";
+import { SubmitButton } from "@/components/SubmitButton";
+import { StarRating } from "@/components/StarRating";
+import { shareContact, unmarkBooked, reopenRequest, leaveReview, finishRequest } from "@/lib/data/connections";
+
+export type Msg = { id: string; sender_id: string | null; body: string; created_at: string; image_url?: string | null };
+export type DetailReview = { rating: number; title: string | null; body: string | null; when: string };
+export type DetailArtist = {
+  id: string;
+  name: string;
+  businessName: string | null;
+  slug: string | null;
+  initials: string;
+  color: string;
+  rating: number;
+  reviewCount: number;
+  styles: string[];
+  bio: string | null;
+  studioName: string | null;
+  location: string | null;
+  instagram: string | null;
+  tiktok: string | null;
+  badges: { insured: boolean; licensed: boolean; hygiene: boolean; firstAid: boolean };
+  memberSince: string | null;
+  portfolio: string[];
+  reviews: DetailReview[];
+  quotePrice: number | null;
+  quoteNote: string | null;
+  quoteId: string | null;
+  conversationId: string | null;
+  messages: Msg[];
+  canReview: boolean;
+  hasReviewed: boolean;
+  /** Full address + contact - populated once contact has been shared (a connection). */
+  revealed?: {
+    address: string | null;
+    area: string | null;
+    postcode: string | null;
+    phone: string | null;
+    email: string | null;
+  } | null;
+};
+
+const Star = ({ s = 13 }: { s?: number }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24"><path d="M12 2l3 6.9 7.5.6-5.7 4.9 1.8 7.3L12 17.8 5.4 21.7l1.8-7.3L1.5 9.5 9 8.9z" /></svg>
+);
+
+function ArtistRow({ a, selected, onClick }: { a: DetailArtist; selected: boolean; onClick: () => void }) {
+  return (
+    <button className={`arow${selected ? " sel" : ""}`} onClick={onClick} type="button">
+      <span className="av" style={{ background: a.color }}>{a.initials}</span>
+      <span className="info">
+        <span className="nm">{a.studioName || a.businessName || a.name}</span>
+        <span className="rt"><Star />{a.rating ? a.rating.toFixed(1) : "New"} <span className="ct">({a.reviewCount} review{a.reviewCount === 1 ? "" : "s"})</span></span>
+      </span>
+      <span className="ch"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg></span>
+    </button>
+  );
+}
+
+export type RequestSummary = {
+  note: string | null;
+  style: string | null;
+  size: string | null;
+  placement: string | null;
+  location: string | null;
+  posted: string | null;
+};
+
+export function RequestDetailView({
+  requestId,
+  requestStatus,
+  currentUserId,
+  artists,
+  bookedArtistId,
+  requestSummary,
+  referenceImages = [],
+}: {
+  requestId: string;
+  requestTitle: string;
+  requestStatus: string;
+  currentUserId: string;
+  artists: DetailArtist[];
+  bookedArtistId: string | null;
+  requestSummary?: RequestSummary;
+  referenceImages?: string[];
+}) {
+  const [cur, setCur] = useState(0);
+  const [tab, setTab] = useState<"pf" | "rv" | "ms">("pf");
+  const [lightbox, setLightbox] = useState<string | null>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const openMessages = () => {
+    setTab("ms");
+    setTimeout(() => tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  };
+  const a = artists[cur];
+  const withChats = artists.filter((x) => x.conversationId);
+  const isClosed = requestStatus === "closed";
+  const bookedName = artists.find((x) => x.id === bookedArtistId)?.name ?? null;
+
+  const requestPanel = requestSummary ? (
+    <div className="card" style={{ marginBottom: 22 }}><div className="pad">
+      <h2>Your request</h2>
+      <div className="meta-row">
+        {[
+          requestSummary.posted && `Posted ${requestSummary.posted}`,
+          requestSummary.style,
+          requestSummary.size,
+          requestSummary.placement,
+          requestSummary.location,
+        ].filter(Boolean).map((m, i) => <span key={i} className="meta-item">{m}</span>)}
+      </div>
+      {requestSummary.note && (
+        <p style={{ marginTop: 12, color: "var(--text)", lineHeight: 1.55 }}>{requestSummary.note}</p>
+      )}
+      {referenceImages.length > 0 && (
+        <>
+          <h4 style={{ margin: "16px 0 8px", fontSize: 14 }}>Reference images</h4>
+          <div className="gallery refs">
+            {referenceImages.map((url, i) => (
+              <button className="gt" key={i} onClick={() => setLightbox(url)} type="button">
+                <img src={url} alt="Your reference" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div></div>
+  ) : null;
+
+  // Top banner: only when the request has an outcome (booked or closed). Booking
+  // auto-closes it (status 'booked'); either state can be reopened.
+  const statusBar = (isClosed || bookedArtistId) ? (
+    <div className="card" style={{ marginBottom: 22 }}><div className="pad" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+      {isClosed ? (
+        <>
+          <span style={{ fontWeight: 700 }}>This request is closed.</span>
+          <form action={reopenRequest}><input type="hidden" name="request_id" value={requestId} /><SubmitButton className="btn-ghost-app">Reopen request</SubmitButton></form>
+        </>
+      ) : (
+        <>
+          <span style={{ fontWeight: 700, color: "var(--trust)" }}>✓ You booked {bookedName} - this request is now closed.</span>
+          <form action={unmarkBooked}><input type="hidden" name="request_id" value={requestId} /><SubmitButton className="btn-ghost-app">Reopen request</SubmitButton></form>
+        </>
+      )}
+    </div></div>
+  ) : null;
+
+  // The single end-of-journey action - only while open (live, not booked), shown at
+  // the bottom of the page. This is where booking is captured: if the customer
+  // booked one of the artists they accepted, picking them here marks the booking
+  // (Verified-booking badge + review) and closes; otherwise it just closes.
+  const acceptedArtists = artists.filter((x) => x.revealed);
+  const closeBox = (!isClosed && !bookedArtistId) ? (
+    <details className="close-box">
+      <summary>Done with this request?</summary>
+      <p className="close-note">
+        {acceptedArtists.length > 0
+          ? "Let us know how it went so we can close this request. If you booked one of these artists, picking them lets you leave a review."
+          : "Let us know how it went so we can close this request."}
+      </p>
+      <form action={finishRequest}>
+        <input type="hidden" name="request_id" value={requestId} />
+        <select name="choice" defaultValue={acceptedArtists[0] ? `book:${acceptedArtists[0].id}` : "elsewhere"} className="rev-select">
+          {acceptedArtists.map((x) => (
+            <option key={x.id} value={`book:${x.id}`}>Yes - I booked {x.name}</option>
+          ))}
+          <option value="elsewhere">I booked someone elsewhere</option>
+          <option value="changed_mind">No - I changed my mind</option>
+        </select>
+        <input name="note" placeholder="Anything else? (optional)" className="rev-input" />
+        <SubmitButton className="btn-ghost-app">Close request</SubmitButton>
+      </form>
+    </details>
+  ) : null;
+
+  if (artists.length === 0 || !a) {
+    return (
+      <>
+        {requestPanel}
+        {statusBar}
+        <div className="card"><div className="pad">
+          <h2>Waiting for quotes</h2>
+          <p className="muted-block">We&apos;ve notified matching artists. Their quotes and chats will appear here as they respond.</p>
+        </div></div>
+        {closeBox}
+        {lightbox && (
+          <div className="lbov show" onClick={() => setLightbox(null)}>
+            <img src={lightbox} alt="Reference full size" />
+          </div>
+        )}
+      </>
+    );
+  }
+
+  const isBookedHere = bookedArtistId === a.id;
+  const business = a.studioName || a.businessName || null;
+  const heading = business ?? a.name;
+  const sub = [business ? `Artist: ${a.name}` : null, a.location].filter(Boolean).join(" · ");
+
+  return (
+    <>
+      {requestPanel}
+      {statusBar}
+      <div className="grid">
+        {/* LEFT */}
+        <div className="lc">
+          {withChats.length > 0 && (
+            <div className="card" style={{ marginBottom: 22 }}>
+              <div className="pad">
+                <h2>My chats</h2>
+                <p className="muted-block">Message the artists you like - swap contact details when you&apos;re ready to take it offline.</p>
+                <div className="alist">
+                  {withChats.map((x) => (
+                    <ArtistRow key={x.id} a={x} selected={x.id === a.id} onClick={() => { setCur(artists.indexOf(x)); setTab("ms"); }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="card"><div className="pad">
+            <h2>Interested artists</h2>
+            <p className="muted-block">These artists responded to your request. Message them to discuss the design and agree a quote.</p>
+            <div className="alist">
+              {artists.map((x, i) => (
+                <ArtistRow key={x.id} a={x} selected={i === cur} onClick={() => setCur(i)} />
+              ))}
+            </div>
+          </div></div>
+        </div>
+
+        {/* RIGHT */}
+        <div className="rc">
+          {/* Artist header (identity only) */}
+          <div className="card">
+            <div className="resp-head">
+              <span className="av" style={{ background: a.color }}>{a.initials}</span>
+              <div className="head-info">
+                <div className="nm">{a.slug ? <Link href={`/artists/${a.slug}`}>{heading}</Link> : heading}</div>
+                <div className="rt"><Star s={15} /><span>{a.rating ? a.rating.toFixed(1) : "New"}</span><span className="ct">({a.reviewCount} reviews)</span></div>
+                {sub && <div className="recv"><span>{sub}</span></div>}
+              </div>
+            </div>
+          </div>
+
+          {/* Artist's quote: price + comment, with Message + Accept quote actions */}
+          <div className="card"><div className="pad">
+            <h2>Artist&apos;s quote</h2>
+            <p className="est-note">Accepting the quote reveals the artist&apos;s full contact details and location - it&apos;s not a contract.</p>
+            <div className="est">
+              <div className="est-main">
+                {a.quotePrice ? <span className="price">From £{a.quotePrice}</span> : <span style={{ fontWeight: 700, color: "var(--ink)" }}>Quote sent</span>}
+                {a.quoteNote && <div className="price-note">{a.quoteNote}</div>}
+              </div>
+              <div className="est-actions">
+                <button type="button" className="btn" onClick={openMessages}>Message</button>
+                {!isClosed && (
+                  a.revealed ? (
+                    <span className="est-accepted">✓ Quote accepted</span>
+                  ) : (
+                    <form action={shareContact}>
+                      <input type="hidden" name="request_id" value={requestId} />
+                      <input type="hidden" name="artist_id" value={a.id} />
+                      <SubmitButton className="btn" pendingText="Accepting…">Accept quote</SubmitButton>
+                    </form>
+                  )
+                )}
+              </div>
+            </div>
+
+            {/* Revealed contact (after accepting the quote) */}
+            {a.revealed && (() => {
+              const fullAddr = [a.revealed.address, a.revealed.area, a.revealed.postcode].filter(Boolean).join(", ");
+              return (
+                <ul className="est-contact">
+                  {fullAddr && <li><div className="k">Studio address</div><div>{fullAddr}</div></li>}
+                  {a.revealed.phone && <li><div className="k">Phone</div><a href={`tel:${a.revealed.phone}`} style={{ color: "var(--violet)", fontWeight: 600 }}>{a.revealed.phone}</a></li>}
+                  {a.revealed.email && <li><div className="k">Email</div><a href={`mailto:${a.revealed.email}`} style={{ color: "var(--violet)", fontWeight: 600 }}>{a.revealed.email}</a></li>}
+                  {!fullAddr && !a.revealed.phone && !a.revealed.email && <li className="ns-sub">{a.name} hasn&apos;t added contact details yet - keep chatting in Messages.</li>}
+                </ul>
+              );
+            })()}
+          </div></div>
+
+          {/* Tabs */}
+          <div className="card" ref={tabsRef}>
+            <div className="ptabs">
+              <button className={tab === "pf" ? "on" : ""} onClick={() => setTab("pf")}>Profile</button>
+              <button className={tab === "rv" ? "on" : ""} onClick={() => setTab("rv")}>Reviews</button>
+              <button className={tab === "ms" ? "on" : ""} onClick={() => setTab("ms")}>Messages</button>
+            </div>
+
+            {tab === "pf" && (
+              <div className="pbody">
+                {a.memberSince && <div className="gk">Member since {a.memberSince}</div>}
+                <h4>Good to know</h4>
+                <ul className="gk-list">
+                  {a.badges.licensed && <li>Licensed / council-registered (self-declared)</li>}
+                  {a.badges.insured && <li>Public liability insurance (self-declared)</li>}
+                  {a.badges.hygiene && <li>Hygiene certified (self-declared)</li>}
+                  {a.badges.firstAid && <li>First-aid trained (self-declared)</li>}
+                  {!a.badges.licensed && !a.badges.insured && !a.badges.hygiene && !a.badges.firstAid && (
+                    <li>Profile reviewed by Quote My Tattoo</li>
+                  )}
+                </ul>
+                {a.bio && <p className="bio">{a.bio}</p>}
+                {a.styles.length > 0 && (
+                  <div className="styles-row">{a.styles.map((s) => <span className="tag" key={s}>{s}</span>)}</div>
+                )}
+                {(a.instagram || a.tiktok) && (
+                  <div className="socials">
+                    {a.instagram && <a className="soc" href={a.instagram} target="_blank" rel="noreferrer">Instagram</a>}
+                    {a.tiktok && <a className="soc" href={a.tiktok} target="_blank" rel="noreferrer">TikTok</a>}
+                  </div>
+                )}
+                {a.portfolio.length > 0 && (
+                  <>
+                    <h4 className="port-h">Portfolio</h4>
+                    <div className="gallery">
+                      {a.portfolio.map((url, i) => (
+                        <button className="gt" key={i} onClick={() => setLightbox(url)} type="button">
+                          <img src={url} alt="Tattoo portfolio piece" loading="lazy" />
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {tab === "rv" && (
+              <div className="pbody">
+                {a.reviews.length === 0 ? (
+                  <p className="muted-block">No reviews yet.</p>
+                ) : (
+                  a.reviews.map((r, i) => (
+                    <div className="rev" key={i}>
+                      <div className="rh">
+                        <span className="stars">{Array.from({ length: r.rating }).map((_, k) => <Star key={k} s={14} />)}</span>
+                        <span className="when">{r.when}</span>
+                      </div>
+                      {r.title && <p style={{ fontWeight: 700, margin: "0 0 4px" }}>{r.title}</p>}
+                      {r.body && <p>{r.body}</p>}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
+            {tab === "ms" && (
+              <div className="pbody">
+                {a.conversationId ? (
+                  <Chat conversationId={a.conversationId} currentUserId={currentUserId} initialMessages={a.messages} />
+                ) : (
+                  <p className="muted-block">A chat will open here once {a.name} messages you.</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Review (stays below the messaging section) */}
+          {a.canReview && (
+            <div className="card nextsteps"><div className="pad">
+              <h3>Leave a review</h3>
+              {a.hasReviewed ? (
+                <p className="ns-sub" style={{ marginTop: 12 }}>Thanks for reviewing {a.name}.</p>
+              ) : (
+                <form action={leaveReview} style={{ marginTop: 14 }}>
+                  <input type="hidden" name="request_id" value={requestId} />
+                  <input type="hidden" name="artist_id" value={a.id} />
+                  <div className="ns-label" style={{ marginBottom: 10 }}>Review {a.name}{isBookedHere ? "  ✅ Verified booking" : ""}</div>
+                  <div style={{ display: "grid", gap: 10 }}>
+                    <StarRating name="rating" defaultValue={5} />
+                    <input name="title" placeholder="Title (optional)" className="rev-input" />
+                    <textarea name="body" placeholder="How was your experience?" className="rev-input" rows={3} />
+                    <SubmitButton className="btn">Submit review</SubmitButton>
+                  </div>
+                </form>
+              )}
+            </div></div>
+          )}
+
+          {closeBox}
+        </div>
+      </div>
+
+      {lightbox && (
+        <div className="lbov show" onClick={() => setLightbox(null)}>
+          <img src={lightbox} alt="Portfolio piece full size" />
+        </div>
+      )}
+    </>
+  );
+}
