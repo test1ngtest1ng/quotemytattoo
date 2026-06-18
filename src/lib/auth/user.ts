@@ -1,15 +1,18 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
 
-/** Returns the current auth user (or null). */
-export async function getUser() {
+/** Returns the current auth user (or null). Wrapped in React cache() so that
+ *  multiple callers within a single server render share ONE auth round-trip
+ *  instead of each re-hitting the Supabase Auth server. */
+export const getUser = cache(async () => {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
-}
+});
 
 /** Returns the current user's profile row (or null if not signed in). */
 export async function getProfile(): Promise<Profile | null> {
