@@ -89,7 +89,11 @@ export function RequestDetailView({
   const deepIdx = wantArtist ? artists.findIndex((a) => a.id === wantArtist) : -1;
 
   const [cur, setCur] = useState(deepIdx >= 0 ? deepIdx : 0);
-  const [tab, setTab] = useState<"pf" | "rv" | "ms">(deepIdx >= 0 || wantTab === "ms" ? "ms" : "pf");
+  // Default to Messages: when a customer reviews a quote they almost always want
+  // to chat. An explicit ?tab= overrides (e.g. a deep-link to Profile/Reviews).
+  const [tab, setTab] = useState<"pf" | "rv" | "ms">(
+    wantTab === "pf" ? "pf" : wantTab === "rv" ? "rv" : "ms",
+  );
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [briefOpen, setBriefOpen] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
