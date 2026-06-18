@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AppHeader } from "@/components/AppHeader";
 import { MyRequestsList, type RequestRow } from "@/components/requests/MyRequestsList";
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 
 export default async function MyRequestsPage() {
   const supabase = await createClient();
+  const adminStorage = createAdminClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -34,7 +36,7 @@ export default async function MyRequestsPage() {
       const first = [...imgs].sort((a, b) => a.created_at.localeCompare(b.created_at))[0];
       let thumbnail: string | null = null;
       if (first) {
-        const { data: signed } = await supabase.storage
+        const { data: signed } = await adminStorage.storage
           .from("request-images")
           .createSignedUrl(first.storage_path, 3600);
         thumbnail = signed?.signedUrl ?? null;

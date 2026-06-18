@@ -58,9 +58,10 @@ export default async function RequestDetailPage({
     .from("request_images")
     .select("storage_path")
     .eq("request_id", id);
+  const adminForImages = createAdminClient();
   const referenceImages: string[] = [];
   for (const im of imgRows ?? []) {
-    const { data: signed } = await supabase.storage
+    const { data: signed } = await adminForImages.storage
       .from("request-images")
       .createSignedUrl(im.storage_path, 3600);
     if (signed?.signedUrl) referenceImages.push(signed.signedUrl);
