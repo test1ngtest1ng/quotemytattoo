@@ -62,6 +62,15 @@ export function RequestWizard({
   const formRef = useRef<HTMLFormElement>(null);
   const pathsRef = useRef<HTMLInputElement>(null);
   const intentRef = useRef<HTMLInputElement>(null);
+  const authSectionRef = useRef<HTMLElement>(null);
+
+  // Keep the guest auth step in view when its error changes (the post-action
+  // refresh can scroll the page back to the top).
+  useEffect(() => {
+    if (authError) {
+      authSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [authError]);
 
   const canUpload = files.length > 0 || note.trim().length > 2;
   const canPlace = !!placement;
@@ -462,7 +471,7 @@ export function RequestWizard({
 
       {/* ---- Step 4 (guests only): create account / sign in, then post ---- */}
       {!loggedIn && (
-        <section className={step === 4 ? "block" : "hidden"}>
+        <section ref={authSectionRef} className={step === 4 ? "block" : "hidden"}>
           <p className="text-xs font-bold uppercase tracking-wider text-violet">Last step</p>
           <h2 className="mt-1 text-2xl font-extrabold text-plum">Almost there - where do we send your quotes?</h2>
           <p className="mt-2 text-muted">
