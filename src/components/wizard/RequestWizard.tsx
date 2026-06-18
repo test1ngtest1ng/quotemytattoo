@@ -200,6 +200,20 @@ export function RequestWizard({
       }
       // On success the action redirects.
     } catch (e) {
+      // A successful action calls redirect()/notFound(), which surface as a
+      // thrown control-flow signal (digest "NEXT_REDIRECT" / "NEXT_NOT_FOUND").
+      // Re-throw those so Next performs the navigation instead of flashing them
+      // as an error.
+      if (
+        e &&
+        typeof e === "object" &&
+        "digest" in e &&
+        typeof (e as { digest?: unknown }).digest === "string" &&
+        ((e as { digest: string }).digest.startsWith("NEXT_REDIRECT") ||
+          (e as { digest: string }).digest === "NEXT_NOT_FOUND")
+      ) {
+        throw e;
+      }
       setAuthError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
       setBusy(false);
     }
