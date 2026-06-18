@@ -209,6 +209,15 @@ export async function submitGuestRequest(
           : error.message,
       };
     }
+    // When email confirmation is ON, Supabase hides "email already registered"
+    // to prevent enumeration: it returns a fabricated user with an empty
+    // identities array and no session. Detect that and nudge to sign in,
+    // rather than proceeding with a fake id (which has no profile -> FK error).
+    if (data.user && (data.user.identities?.length ?? 0) === 0) {
+      return {
+        error: "That email already has an account. Switch to \"I already have an account\" to sign in, or check your inbox for the confirmation link.",
+      };
+    }
     userId = data.user?.id ?? null;
     hasSession = !!data.session;
   }
@@ -249,7 +258,7 @@ export async function submitGuestRequest(
     .single();
   if (insErr || !req) {
     console.error("submitGuestRequest insert failed:", insErr);
-    return { error: `DB error: ${insErr?.message ?? "unknown"}${insErr?.code ? ` [${insErr.code}]` : ""}` };
+    return { error: "Sorry, we couldn't save your request. Please try again." };
   }
 
   if (imagePaths.length > 0) {

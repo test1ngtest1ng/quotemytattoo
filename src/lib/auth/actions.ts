@@ -71,6 +71,16 @@ export async function signUp(
   });
   if (error) return { error: error.message };
 
+  // When email confirmation is ON, Supabase hides "email already registered"
+  // (anti-enumeration) by returning a fabricated user with an empty identities
+  // array and no session. Detect that and point the user at sign-in instead of
+  // silently sending them to a check-email page where no email will arrive.
+  if (data.user && !data.session && (data.user.identities?.length ?? 0) === 0) {
+    return {
+      error: "That email already has an account. Try logging in, or check your inbox for the confirmation link.",
+    };
+  }
+
   const roleDest =
     role === "artist"
       ? "/artist/onboarding"
