@@ -18,7 +18,7 @@ export async function MarketingHeader() {
           <nav className="nav">
             <Link className="logo" href="/">
               <span className="mk">
-                <LogoMark />
+                <LogoMark fill="#fff" />
               </span>
               <span className="lt">
                 quotemytattoo<i>.co.uk</i>

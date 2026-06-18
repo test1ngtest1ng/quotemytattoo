@@ -12,7 +12,7 @@ export function MarketingFooter() {
       <div className="bigfoot">
         <div className="wrap">
           <Link className="flogo" href="/">
-            <span className="mk"><LogoMark /></span>
+            <span className="mk"><LogoMark fill="#311A41" /></span>
             <span className="lt">quotemytattoo<i>.co.uk</i></span>
           </Link>
 
