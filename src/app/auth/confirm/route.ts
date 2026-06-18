@@ -64,11 +64,19 @@ export async function GET(request: NextRequest) {
     return failDest("That link has expired or was already used. Please request a new one.");
   }
 
+  // For signup and email_change, defer token exchange to a page the user must
+  // interact with. Email security scanners (Gmail etc.) pre-fetch GET links and
+  // would consume the one-time token before the user clicks it.
+  if (token_hash && type && type !== "recovery") {
+    const params = new URLSearchParams({ token_hash, type, next });
+    return NextResponse.redirect(new URL(`/auth/verify-email?${params}`, request.url));
+  }
+
   const supabase = await createClient();
 
-  // Email confirmations (not password recovery / email change) may have a pending
-  // guest request to publish once the account is verified.
-  const mayPublish = type !== "recovery" && type !== "email_change";
+  // Recovery: verify immediately so the session is live when the password-reset
+  // form renders.
+  const mayPublish = false;
 
   // Preferred: stateless OTP.
   if (token_hash && type) {
