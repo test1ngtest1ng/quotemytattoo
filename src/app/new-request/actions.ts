@@ -196,6 +196,21 @@ export async function submitGuestRequest(
     userId = data.user.id;
     hasSession = true;
   } else {
+    // Check for an existing account BEFORE signUp. signUp on the SSR client
+    // writes auth cookies, and a server action that mutates cookies makes Next
+    // refresh the route - which remounts the wizard back to step 1 and clears
+    // the form. The admin client never touches cookies, so the "already
+    // registered" error path returns without disturbing the page.
+    const preCheck = createAdminClient();
+    const { data: existingProfile } = await preCheck
+      .from("profiles")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
+    if (existingProfile) {
+      return { error: "This email is already registered. Please sign in instead." };
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
