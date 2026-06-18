@@ -96,5 +96,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return failDest("That link is invalid or has expired. Please request a new one.");
+  return failDest(`ROUTE FALLBACK: th=${token_hash ? "yes" : "no"} type=${type ?? "none"} code=${code ? "yes" : "no"}`);
 }

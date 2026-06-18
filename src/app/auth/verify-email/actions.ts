@@ -45,7 +45,7 @@ export async function confirmEmail(formData: FormData) {
   const { error } = await supabase.auth.verifyOtp({ type, token_hash });
 
   if (error) {
-    redirect("/login?error=" + encodeURIComponent("That link is invalid or has expired. Please request a new one."));
+    redirect("/login?error=" + encodeURIComponent(`VERIFY FAILED (button): ${error.message} [status=${error.status ?? "?"} code=${error.code ?? "?"}]`));
   }
 
   if (type !== "recovery" && type !== "email_change") {
