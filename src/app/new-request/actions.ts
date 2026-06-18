@@ -205,7 +205,7 @@ export async function submitGuestRequest(
       const dup = /already|registered|exists/i.test(error.message);
       return {
         error: dup
-          ? "That email already has an account - switch to \"I already have an account\" to sign in."
+          ? "This email is already registered. Please sign in instead."
           : error.message,
       };
     }
@@ -215,7 +215,7 @@ export async function submitGuestRequest(
     // rather than proceeding with a fake id (which has no profile -> FK error).
     if (data.user && (data.user.identities?.length ?? 0) === 0) {
       return {
-        error: "That email already has an account. Switch to \"I already have an account\" to sign in, or check your inbox for the confirmation link.",
+        error: "This email is already registered. Please sign in instead.",
       };
     }
     userId = data.user?.id ?? null;

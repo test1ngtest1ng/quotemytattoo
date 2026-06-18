@@ -77,7 +77,7 @@ export async function signUp(
   // silently sending them to a check-email page where no email will arrive.
   if (data.user && !data.session && (data.user.identities?.length ?? 0) === 0) {
     return {
-      error: "That email already has an account. Try logging in, or check your inbox for the confirmation link.",
+      error: "This email is already registered. Please sign in instead.",
     };
   }
 
