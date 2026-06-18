@@ -8,9 +8,12 @@ export type GeoPoint = { lat: number; lng: number; area: string | null };
 
 const API = "https://api.postcodes.io";
 
-async function getJson(url: string): Promise<{ result?: unknown } | null> {
+async function getJson(
+  url: string,
+  headers?: Record<string, string>,
+): Promise<{ result?: unknown } | null> {
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, headers ? { headers } : undefined);
     if (!res.ok) return null;
     return (await res.json()) as { result?: unknown };
   } catch {
@@ -49,7 +52,28 @@ export async function geocode(query: string): Promise<GeoPoint | null> {
     return null;
   }
 
-  // Town / place name.
+  // Town / place name. Prefer Nominatim (OpenStreetMap): it ranks results by
+  // "importance", so an ambiguous name like "Romford" resolves to the well-known
+  // town (Greater London) rather than a tiny hamlet that postcodes.io's /places
+  // happens to return first (e.g. Romford, Dorset). Fall back to postcodes.io.
+  const nominatim = await getJson(
+    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&countrycodes=gb&format=json&limit=1`,
+    { "User-Agent": "QuoteMyTattoo/1.0 (https://quotemytattoo.co.uk)" },
+  );
+  const nArr = nominatim as unknown as
+    | Array<{ lat?: string; lon?: string; display_name?: string }>
+    | null;
+  const np = Array.isArray(nArr) ? nArr[0] : undefined;
+  if (np?.lat && np?.lon) {
+    const lat = parseFloat(np.lat);
+    const lng = parseFloat(np.lon);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      const area = np.display_name?.split(",")[0]?.trim() || null;
+      return { lat, lng, area };
+    }
+  }
+
+  // Fallback: postcodes.io places.
   const places = await getJson(`${API}/places?q=${encodeURIComponent(q)}&limit=1`);
   const arr = places?.result as
     | Array<{ latitude?: number; longitude?: number; name_1?: string; county_unitary?: string }>

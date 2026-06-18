@@ -140,7 +140,7 @@ export async function runMatching(
   if (candidates.length === 0) return { matched: 0 };
 
   const now = new Date().toISOString();
-  await admin.from("request_matches").upsert(
+  const { error: matchErr } = await admin.from("request_matches").upsert(
     candidates.map((a) => ({
       request_id: requestId,
       artist_id: a.id,
@@ -150,6 +150,11 @@ export async function runMatching(
     })),
     { onConflict: "request_id,artist_id", ignoreDuplicates: true },
   );
+  if (matchErr) {
+    // Surface instead of silently reporting success - a failed write here means
+    // matched artists never get their lead.
+    console.error(`runMatching: request_matches upsert failed for ${requestId}: ${matchErr.message}`);
+  }
 
   // In-app "new lead" notification for each matched artist (fails soft).
   try {
