@@ -247,7 +247,10 @@ export async function submitGuestRequest(
     })
     .select("id")
     .single();
-  if (insErr || !req) return { error: "Sorry, we couldn't save your request. Please try again." };
+  if (insErr || !req) {
+    console.error("submitGuestRequest insert failed:", insErr);
+    return { error: `DB error: ${insErr?.message ?? "unknown"}${insErr?.code ? ` [${insErr.code}]` : ""}` };
+  }
 
   if (imagePaths.length > 0) {
     await admin.from("request_images").insert(
