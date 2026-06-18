@@ -43,7 +43,7 @@ const getCityArtists = unstable_cache(
     return data ?? [];
   },
   ["city-artists"],
-  { revalidate: 300 },
+  { revalidate: 300, tags: ["artists"] },
 );
 
 export async function generateMetadata({

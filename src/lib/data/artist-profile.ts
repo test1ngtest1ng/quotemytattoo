@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { geocode } from "@/lib/geo";
 import { MAX_ARTIST_STYLES } from "@/lib/constants";
@@ -29,6 +29,7 @@ export async function setAvailability(formData: FormData) {
   await supabase.from("artists").update({ available }).eq("id", artistId);
   revalidatePath("/dashboard");
   revalidatePath("/artist/profile");
+  revalidateTag("artists"); // bust cached public directory/profile pages
   redirect("/dashboard");
 }
 
@@ -83,6 +84,7 @@ export async function updateArtist(formData: FormData) {
   if (displayName) await supabase.from("profiles").update({ name: displayName }).eq("id", userId);
 
   revalidatePath("/artist/profile");
+  revalidateTag("artists"); // bust cached public directory/profile pages
   redirect("/artist/profile?saved=1");
 }
 
@@ -114,6 +116,7 @@ export async function addPortfolioImages(formData: FormData) {
     }
   }
   revalidatePath("/artist/profile");
+  revalidateTag("artists"); // bust cached public directory/profile pages
   redirect("/artist/profile?saved=portfolio");
 }
 
@@ -126,5 +129,6 @@ export async function removePortfolioImage(formData: FormData) {
   await supabase.from("portfolio_images").delete().eq("id", imageId).eq("artist_id", artistId);
   if (path) await supabase.storage.from("portfolio").remove([path]);
   revalidatePath("/artist/profile");
+  revalidateTag("artists"); // bust cached public directory/profile pages
   redirect("/artist/profile?saved=portfolio");
 }

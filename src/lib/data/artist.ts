@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { geocode } from "@/lib/geo";
@@ -169,5 +170,6 @@ export async function createArtistProfile(formData: FormData) {
     }
   }
 
+  revalidateTag("artists"); // bust cached public directory/profile pages
   redirect("/dashboard");
 }

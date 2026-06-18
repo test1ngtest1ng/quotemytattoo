@@ -61,7 +61,7 @@ export default function Home() {
             </div>
             <div className="hero-right">
               <div className="photo">
-                <span className="tag">
+                <span className="photo-tag">
                   <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 2l3 6.9 7.5.6-5.7 4.9 1.8 7.3L12 17.8 5.4 21.7l1.8-7.3L1.5 9.5 9 8.9z" /></svg> Mara · 5/5
                 </span>
                 <Image className="scene" src="/images/home-1.jpg" alt="A tattoo artist at work on a client's arm" fill sizes="(max-width: 760px) 90vw, 480px" priority />

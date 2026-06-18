@@ -75,7 +75,7 @@ const getArtist = unstable_cache(
     return (data as unknown as ProfileRow) ?? null;
   },
   ["artist-profile-by-slug"],
-  { revalidate: 300 },
+  { revalidate: 300, tags: ["artists"] },
 );
 
 export async function generateStaticParams() {
