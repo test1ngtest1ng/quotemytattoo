@@ -3,7 +3,8 @@ import Link from "next/link";
 import { PublicNav } from "@/components/PublicNav";
 import { notFound } from "next/navigation";
 import { CITIES, getCity, otherCities, cityFaqs } from "@/lib/cities";
-import { createClient } from "@/lib/supabase/server";
+import { unstable_cache } from "next/cache";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getUser } from "@/lib/auth/user";
 import { TATTOO_STYLES } from "@/lib/constants";
 import { styleSlug } from "@/lib/styles";
@@ -25,6 +26,25 @@ const initials = (name: string) =>
 export function generateStaticParams() {
   return CITIES.map((c) => ({ city: c.slug }));
 }
+
+// Cached per city for 5 minutes. This list is public and changes slowly, so we
+// skip the DB on repeat views. Cookieless admin client (a cached function must
+// not read request cookies).
+const getCityArtists = unstable_cache(
+  async (cityName: string) => {
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from("artists")
+      .select("display_name, business_name, slug, bio, styles, rating, review_count, location_area, location_postcode, featured_until, studios!artists_studio_id_fkey(name, location_area, location_postcode)")
+      .eq("profile_complete", true)
+      .ilike("location_area", `%${cityName}%`)
+      .order("rating", { ascending: false })
+      .limit(60);
+    return data ?? [];
+  },
+  ["city-artists"],
+  { revalidate: 300 },
+);
 
 export async function generateMetadata({
   params,
@@ -53,14 +73,7 @@ export default async function CityPage({
   const c = getCity(city);
   if (!c) notFound();
 
-  const [user, supabase] = [await getUser(), await createClient()];
-  const { data: allArtists } = await supabase
-    .from("artists")
-    .select("display_name, business_name, slug, bio, styles, rating, review_count, location_area, location_postcode, featured_until, studios!artists_studio_id_fkey(name, location_area, location_postcode)")
-    .eq("profile_complete", true)
-    .ilike("location_area", `%${c.name}%`)
-    .order("rating", { ascending: false })
-    .limit(60);
+  const [user, allArtists] = [await getUser(), await getCityArtists(c.name)];
 
   // Featured artists (paid placement) take the top slots, then everyone else.
   // When more are featured than fit, rotate daily so all get fair exposure.

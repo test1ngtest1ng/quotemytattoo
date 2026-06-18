@@ -4,7 +4,8 @@ import { PublicNav } from "@/components/PublicNav";
 import { notFound } from "next/navigation";
 import { CITIES, getCity } from "@/lib/cities";
 import { STYLES, getStyle } from "@/lib/styles";
-import { createClient } from "@/lib/supabase/server";
+import { unstable_cache } from "next/cache";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getUser } from "@/lib/auth/user";
 import { businessName } from "@/lib/identity";
 import { publicLocation } from "@/lib/geo";
@@ -23,6 +24,25 @@ export function generateStaticParams() {
   return CITIES.flatMap((c) => STYLES.map((s) => ({ city: c.slug, style: s.slug })));
 }
 
+// Cached per (style, city) for 5 minutes. Public, slow-changing list - skip the
+// DB on repeat views. Cookieless admin client (cached fns can't read cookies).
+const getStyleCityArtists = unstable_cache(
+  async (styleName: string, cityName: string) => {
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from("artists")
+      .select("display_name, business_name, slug, bio, styles, rating, review_count, location_area, location_postcode, featured_until, studios!artists_studio_id_fkey(name, location_area, location_postcode)")
+      .eq("profile_complete", true)
+      .contains("styles", [styleName])
+      .ilike("location_area", `%${cityName}%`)
+      .order("rating", { ascending: false })
+      .limit(30);
+    return data ?? [];
+  },
+  ["style-city-artists"],
+  { revalidate: 300 },
+);
+
 export async function generateMetadata({
   params,
 }: {
@@ -37,20 +57,15 @@ export async function generateMetadata({
 
   // Thin-page guard: a combo with no matching artists is a near-empty doorway
   // page. Keep it crawlable (follow) but out of the index until it has artists.
-  const supabase = await createClient();
-  const { count } = await supabase
-    .from("artists")
-    .select("id", { count: "exact", head: true })
-    .eq("profile_complete", true)
-    .contains("styles", [s.name])
-    .ilike("location_area", `%${c.name}%`);
+  // Reuses the cached list so metadata + page share one DB read.
+  const count = (await getStyleCityArtists(s.name, c.name)).length;
 
   return {
     title,
     description,
     alternates: { canonical: `/tattoo-artists/${c.slug}/${s.slug}` },
     openGraph: { title, description, url: `${SITE}/tattoo-artists/${c.slug}/${s.slug}`, type: "website" },
-    ...((count ?? 0) === 0 ? { robots: { index: false, follow: true } } : {}),
+    ...(count === 0 ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -64,15 +79,7 @@ export default async function CityStylePage({
   const s = getStyle(style);
   if (!c || !s) notFound();
 
-  const [user, supabase] = [await getUser(), await createClient()];
-  const { data: all } = await supabase
-    .from("artists")
-    .select("display_name, business_name, slug, bio, styles, rating, review_count, location_area, location_postcode, featured_until, studios!artists_studio_id_fkey(name, location_area, location_postcode)")
-    .eq("profile_complete", true)
-    .contains("styles", [s.name])
-    .ilike("location_area", `%${c.name}%`)
-    .order("rating", { ascending: false })
-    .limit(30);
+  const [user, all] = [await getUser(), await getStyleCityArtists(s.name, c.name)];
 
   const nowMs = Date.now();
   const isFeatured = (a: { featured_until?: string | null }) =>

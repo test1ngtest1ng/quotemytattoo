@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { PublicNav } from "@/components/PublicNav";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getUser } from "@/lib/auth/user";
 import { getSavedArtistIds } from "@/lib/data/saved";
@@ -58,16 +59,24 @@ type ProfileRow = {
 const SELECT =
   "id, display_name, business_name, slug, bio, styles, rating, review_count, location_area, location_postcode, instagram_url, tiktok_url, insured, licensed, hygiene_certified, first_aid, verification_status, created_at, studios!artists_studio_id_fkey(name, slug, location_area, location_postcode), portfolio_images(storage_path, position), reviews(id, rating, title, body, created_at, hidden, artist_reply, request:tattoo_requests!reviews_request_id_fkey(booked_artist_id))";
 
-async function getArtist(slug: string): Promise<ProfileRow | null> {
-  const admin = createAdminClient();
-  const { data } = await admin
-    .from("artists")
-    .select(SELECT)
-    .eq("slug", slug)
-    .eq("profile_complete", true)
-    .maybeSingle();
-  return (data as unknown as ProfileRow) ?? null;
-}
+// Cached per slug for 5 minutes. The artist profile is public, read-heavy and
+// rarely changes, so we skip the DB on repeat views. Profile edits appear within
+// the revalidate window. Uses the cookieless admin client (required: a cached
+// function must not read request cookies).
+const getArtist = unstable_cache(
+  async (slug: string): Promise<ProfileRow | null> => {
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from("artists")
+      .select(SELECT)
+      .eq("slug", slug)
+      .eq("profile_complete", true)
+      .maybeSingle();
+    return (data as unknown as ProfileRow) ?? null;
+  },
+  ["artist-profile-by-slug"],
+  { revalidate: 300 },
+);
 
 export async function generateStaticParams() {
   const admin = createAdminClient();
